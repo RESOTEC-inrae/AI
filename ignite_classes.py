@@ -29,8 +29,10 @@ from ignite.engine import Engine, Events
 from ignite.metrics import Loss, Accuracy, Precision, Recall
 from ignite.handlers import ModelCheckpoint, EarlyStopping
 from ignite.contrib.handlers import global_step_from_engine
-from ignite.handlers.tqdm_logger import ProgressBar
-import ignite.handlers.mlflow_logger as mlflow_logger
+#from ignite.handlers.tqdm_logger import ProgressBar
+from ignite.contrib.handlers.tqdm_logger import ProgressBar
+#import ignite.handlers.mlflow_logger as mlflow_logger
+import ignite.contrib.handlers.mlflow_logger as mlflow_logger
 from ignite.handlers.param_scheduler import LRScheduler
 from ignite.handlers import FastaiLRFinder
 

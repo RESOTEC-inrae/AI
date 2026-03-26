@@ -1,4 +1,5 @@
 albumentations
+boto3
 ipywidgets
 jupyterlab
 livelossplot
