@@ -134,6 +134,12 @@ checkpoints_dict = {
         "link": "https://huggingface.co/facebook/convnext-tiny-224",
         "class": ConvNextForImageClassification,
     },
+    "hf_cnx2_t": {
+        "path": "facebook/convnextv2-tiny-22k-224",
+        "name": "ConvNeXt V2 (tiny-sized model)",
+        "link": "https://huggingface.co/facebook/convnextv2-tiny-22k-224",
+        "class": ConvNextForImageClassification,
+    },
     "hf_det_b": {
         "path": "facebook/deit-base-distilled-patch16-224",
         "name": "Distilled Data-efficient Image Transformer (base-sized model)",
