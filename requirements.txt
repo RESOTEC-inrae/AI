@@ -12,7 +12,6 @@ pytorch-ignite
 rich
 scikit-learn
 scipy
-torch
 torchvision
 transformers
 tqdm
