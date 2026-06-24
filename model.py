@@ -1060,6 +1060,7 @@ def train_model(
                 "plot_loss": plot_loss,
                 "num_workers": num_workers,
                 "run_owner": run_owner,
+                "backbone": backbone,
             },
             optimizer=optimizer,
             train=train_data,
