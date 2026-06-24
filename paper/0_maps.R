@@ -4,8 +4,9 @@ sf::sf_use_s2(FALSE)
 library(rnaturalearth)
 library(scales)
 
-# Working directory
-setwd("~/Nextcloud INRAE/RESOTEC/AI_Flickr")
+
+# Create a directory where to save generated figures and tables
+if(!dir.exists("paper/figures")) dir.create("paper/figures")
 
 # Load images
 tab <- read.csv("data/images.csv")
@@ -30,13 +31,13 @@ for(k in 1:n){
 }
 
 # Map Europe [Figure 1]
-pdf("figures/Fig1.pdf", width = 4.5, height = 5.9, useDingbats = FALSE)
+pdf("paper/figures/Fig1.pdf", width = 4.5, height = 5.9, useDingbats = FALSE)
 
   colo <- c("#5F9DFB","#5F9DFB", "#5F9DFB", "#5F9DFB",
             "#F8766D", "#F8766D", "#F8766D")
   poso <- c(3,1,3,1,1,3,3)
 
-  world <- ne_countries()
+  world <- ne_countries(scale = "medium")
   world <- st_crop(world, st_bbox(c(xmin = -15, 
                                     xmax = 50, 
                                     ymin = 30, 
@@ -59,13 +60,13 @@ pdf("figures/Fig1.pdf", width = 4.5, height = 5.9, useDingbats = FALSE)
   }
   
   legend("topleft", col=colo[c(1,5)], pch = 16, pt.cex = 2, 
-         legend=c("Train / Val / Test / Holdout", "External"), cex=1.2, bty="n") 
+         legend=c("Train / Val / Test", "External"), cex=1.2, bty="n") 
   
 
 dev.off()
 
 # Maps sites [Figure S1]
-pdf("figures/FigS1.pdf", width = 13.2, height = 6.6, useDingbats = FALSE)
+pdf("paper/figures/FigS1.pdf", width = 13.2, height = 6.6, useDingbats = FALSE)
 
   colo <- c("#5F9DFB","#5F9DFB", "#5F9DFB", "#5F9DFB",
             "#F8766D", "#F8766D", "#F8766D")
