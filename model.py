@@ -908,7 +908,7 @@ def upload_model_to_logger(
         model_input=test_batch.numpy(),
         model_output=model(test_batch.to(device)).detach().cpu().numpy(),
     )
-    log_model(model, "model", signature=signature)
+    log_model(model, "model", signature=signature, serialization_format="pickle")
     mlf_logger.log_params(model.to_logger())
 
 
