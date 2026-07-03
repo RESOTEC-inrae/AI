@@ -31,7 +31,7 @@ for(k in 1:n){
 }
 
 # Map Europe [Figure 1]
-pdf("paper/figures/Fig1.pdf", width = 4.5, height = 5.9, useDingbats = FALSE)
+pdf("paper/figures/Fig_main_map.pdf", width = 4.5, height = 5.9, useDingbats = FALSE)
 
   colo <- c("#5F9DFB","#5F9DFB", "#5F9DFB", "#5F9DFB",
             "#F8766D", "#F8766D", "#F8766D")
@@ -66,7 +66,7 @@ pdf("paper/figures/Fig1.pdf", width = 4.5, height = 5.9, useDingbats = FALSE)
 dev.off()
 
 # Maps sites [Figure S1]
-pdf("paper/figures/FigS1.pdf", width = 13.2, height = 6.6, useDingbats = FALSE)
+pdf("paper/figures/Fig_supp_sites.pdf", width = 13.2, height = 6.6, useDingbats = FALSE)
 
   colo <- c("#5F9DFB","#5F9DFB", "#5F9DFB", "#5F9DFB",
             "#F8766D", "#F8766D", "#F8766D")

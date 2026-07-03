@@ -1,8 +1,53 @@
 # Packages
 library(sfsmisc)
+library(data.table)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
 
-# Working directory
-setwd("~/Nextcloud INRAE/RESOTEC/AI_Flickr")
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# - Read data ----
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# Fetch results data with both full dataset and balanced one
+results_balanced = fread("outputs/swin_balanced_results.csv")
+results_full = fread("outputs/swin_full_results.csv")
+results = rbind(mutate(results_balanced, dataset = "balanced"), 
+                mutate(results_full, dataset = "full"))
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# - Figure on the random seed effect ----
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# Make plot
+plot.seed = results %>%
+  filter(labels == "weighted avg") %>%
+  mutate(seed = as.character(rep)) %>%
+  select(-support, -rep, -labels) %>%
+  pivot_longer(names_to = "metric", values_to = "value", 
+               cols = c("recall", "precision", "f1-score")) %>%
+  mutate(metric = factor(metric, levels = c("recall", "precision", "f1-score"))) %>%
+  ggplot(aes(x = seed, y = value, fill = dataset)) + 
+  geom_boxplot(outliers = FALSE) + 
+  facet_wrap( ~ metric, scales = "free", nrow = 1) +
+  scale_fill_manual(values = c("#81B29A", "#E07A5F")) +
+  ylab("") + xlab("Random seed") +
+  theme(panel.grid = element_line(colour = "grey", linetype = "dotted"), 
+        panel.background = element_rect(color = 'black', fill = 'white'), 
+        strip.background = element_rect(color = 'black', fill = 'white'),
+        strip.text = element_text(size = 17), 
+        legend.key = element_blank(), 
+        legend.text = element_text(size = 14), 
+        legend.title = element_blank())  
+
+# Save plot
+ggsave("paper/figures/Fig_supp_seed.pdf", plot.seed, width = 25, 
+       height = 8, units = "cm", dpi = 600, bg = "white")
+
+
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# - Code Maxime ----
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 # Load data
 swt <- read.csv("outputs/trainswt_results.csv")
