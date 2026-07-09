@@ -8,10 +8,6 @@ library(tidyr)
 library(cowplot)
 sf::sf_use_s2(FALSE)
 
-# Working directory
-setwd("~/Nextcloud/RESOTEC/AI_Flickr")
-if(!dir.exists("figures/FigS5")) dir.create("figures/FigS5")
-
 # List sites
 sites <- list.files(path = "data/boundaries")
 sites <- substr(sites, 1, nchar(sites)-5)
@@ -43,8 +39,7 @@ for(i in 1:length(sites)){
   site.in = sites[i]
   
   # Load predictions
-  data.predict.in_file = paste0("outputs/sites/", tolower(site.in), "/", 
-                                tolower(site.in), "_prediction_revue.csv")
+  data.predict.in_file = paste0("outputs/sites/", site.in, "/prediction_revue_balanced.csv")
   data.predict.in = fread(data.predict.in_file) %>% 
     mutate(image = as.numeric(image)) 
   colnames(data.predict.in) = gsub("ŷ", "u", colnames(data.predict.in))
@@ -72,7 +67,8 @@ for(i in 1:length(sites)){
       # Add an ID for each interaction
       mutate(id_interaction = paste(owner, substr(date, 1, 10), idcell, sep = "_")) %>%
       # Add information on prediction
-      left_join(data.predict.in, by = c("image", "site")) %>%
+      left_join(data.predict.in %>% mutate(site = tolower(site)), 
+                by = c("image", "site")) %>%
       # Group predictions by interaction
       group_by(idcell, id_interaction) %>%
       summarize(u_human = ifelse(any(u_human), 1, 0), 
@@ -181,10 +177,6 @@ for(i in 1:length(sites)){
       # - Store in list
       maplist.out[[i]] = map.in
       
-      # Save map
-      ggsave(paste0("figures/FigS5/", site.in, ".jpeg"), map.in, width = 30, 
-             height = 12, units = "cm", dpi = 600, bg = "white")
-      
     }
     
   }
@@ -207,7 +199,7 @@ plot.out = plot_grid(
   ncol = 1, scale = 0.95, labels = c("(a)", "(b)", "(c)"), label_size = 20
 )
 # - Save plots
-ggsave("figures/Fig3.pdf", plot.out, width = 38, 
+ggsave("paper/figures/Fig_main_mapfeatures.pdf", plot.out, width = 38, 
        height = 33, units = "cm", bg = "white")
 
 # Build plot of statistics per grid
@@ -223,6 +215,6 @@ plot.stat.grid = table.stat.grid %>%
   theme_bw() + 
   ylab("") + xlab("Grid pixel size (m)")
 # - Save plot
-ggsave("figures/FigS6.pdf", plot.stat.grid, width = 20, 
+ggsave("paper/figures/Fig_supp_statmapfeatures.pdf", plot.stat.grid, width = 20, 
        height = 7, units = "cm", bg = "white")
 
