@@ -16,7 +16,13 @@ minigrid_formatted = minigrid %>%
   select(-support, -labels, -run_id) %>%
   mutate(batch_size = paste0("BS = ", batch_size), 
          learning_rate = paste0("LR = ", learning_rate), 
-         lr_bs = paste0(batch_size, "\n", learning_rate)) %>%
+         lr_bs = paste0(batch_size, "\n", learning_rate), 
+         backbone = case_when(
+           backbone == "hf_swt_t" ~ "Swin Transformer", 
+           backbone == "hf_resnet" ~ "ResNet", 
+           backbone == "hf_cnx2_t" ~ "ConvNeXt", 
+           backbone == "hf_vit_g16" ~ "Vision Transformer"
+         )) %>%
   pivot_longer(names_to = "metric", values_to = "value", 
                cols = c("precision", "recall", "f1-score")) %>%
   group_by(backbone, batch_size, learning_rate, lr_bs, dataset, metric) %>%
@@ -52,7 +58,7 @@ plot_minigrid = minigrid_formatted %>%
         strip.text.y = element_text(size = 10), 
         legend.key = element_blank(), 
         legend.text = element_text(size = 14), 
-        legend.title = element_text(size = 15)) 
+        legend.title = element_blank()) 
 
 # Save plot
 ggsave("paper/figures/Fig_main_minigrid.pdf", plot_minigrid, width = 20, 
