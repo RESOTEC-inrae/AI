@@ -33,6 +33,12 @@ minigrid_formatted = minigrid %>%
 
 # Plot 
 plot_minigrid = minigrid_formatted %>%
+  # Fix for configuration with no convergence
+  rbind(minigrid_formatted %>% filter(backbone == "Vision Transformer" & 
+                                        lr_bs == "BS = 16\nLR = 1e-04" &
+                                        dataset == "full") %>% 
+          mutate(lr_bs = "BS = 16\nLR = 1e-05",
+                 mean = NA, sd = NA, lwr = NA, upr = NA)) %>%
   mutate(metric = factor(metric, levels = c("recall", "precision", "f1-score"))) %>% 
   ggplot(aes(x = backbone, y = mean, fill = dataset))+
   geom_bar(stat="identity", color= "lightgray", position=position_dodge())+ 

@@ -50,8 +50,9 @@ for(i in 1:length(sites)){
                         max = max(x, na.rm = TRUE)))
   # Extract land cover for the site
   land.cover.i = extract(rast_landcover, boundaries.site.in, fun = table) %>%
-    pivot_longer(cols = colnames(.)[2:dim(.)[2]], names_to = "landcover_cat", 
-                 values_to = "landcover_npixel")  %>%
+    # pivot_longer(cols = colnames(.)[2:dim(.)[2]], names_to = "landcover_cat", 
+    #              values_to = "landcover_npixel")  %>%
+    rename(landcover_cat = LABEL3) %>%
     mutate(
       synthesized_class = case_when(
         # Urban
@@ -135,35 +136,42 @@ for(i in 1:length(sites)){
         
         TRUE ~ NA_character_)) %>%
     group_by(synthesized_class) %>%
-    summarize(sumpixel = sum(landcover_npixel, na.rm = TRUE)) %>%
+    summarize(sumpixel = sum(count, na.rm = TRUE)) %>%
     ungroup() %>% 
     mutate(prop = sumpixel/sum(sumpixel, na.rm = TRUE), 
            perc = paste0(round(prop, digits = 3)*100, " %")) %>%
     dplyr::select(synthesized_class, perc) %>%
-    pivot_wider(names_from = "synthesized_class", values_from = "perc") %>%
-    dplyr::select(-Other) %>%
+    filter(synthesized_class != "Other") %>%
     mutate(site = sites[i])
   
   # Extract temperature and precipitations
-  data.i = data.frame(
+  data.clim.i = data.frame(
     site = sites[i], 
     temperature = as.numeric(extract(rast_temp, boundaries.site.in, fun = "mean")[2]), 
     precipitation = as.numeric(extract(rast_prec, boundaries.site.in, fun = "mean")[2]), 
     elevation = as.numeric(extract(elevation_raster, boundaries.site.in, fun = "mean")[2])) %>%
     mutate(temperature = paste0(round(temperature, digits = 1), " °C"), 
            precipitation = paste0(round(precipitation, digits = 0), ' mm'), 
-           elevation = paste0(round(elevation, digits = 0), ' m')) %>%
-    left_join(land.cover.i, by = "site")
+           elevation = paste0(round(elevation, digits = 0), ' m'))
   
   # Assemble data
-  if(i == 1) data = data.i
-  else data = rbind(data, data.i)
+  if(i == 1){
+    data.clim = data.clim.i
+    land.cover = land.cover.i
+  }else{
+    data.clim = rbind(data.clim, data.clim.i)
+    land.cover = rbind(land.cover, land.cover.i)
+  } 
   
   
 }
 
 # Final formatting
-out = data %>%
+out = land.cover  %>%
+  pivot_wider(names_from = "synthesized_class", values_from = "perc") %>%
+  replace(is.na(.), "0.0%") %>%
+  distinct() %>%
+  left_join(data.clim, by = "site") %>%
   mutate(site = gsub("\\_", "\\ ", site)) %>%
   pivot_longer(cols = colnames(.)[2:dim(.)[2]], names_to = "col", values_to = "val") %>%
   mutate(col = case_when(col == "temperature" ~ "Mean temperature", 
@@ -173,6 +181,7 @@ out = data %>%
   pivot_wider(names_from = "site", values_from = "val") %>%
   rename(" " = "col")
 colnames(out) = c("", sites)
+
 # Make latex table
 dir.create("paper/tables")
 print(xtable(out, type = "latex", label = "tablesites",
