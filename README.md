@@ -1,10 +1,5 @@
 # Deep Learning for Social Media Image Classification in European Natural Sites
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
-[![R](https://img.shields.io/badge/R-4.0+-blue.svg)](https://cran.r-project.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Paper](https://img.shields.io/badge/Paper-in%20preparation-orange.svg)]()
-
 This repository contains the code and statistical analyses for the paper:
 
 **"An open-source deep-learning model for classifying the content of social media images across European natural sites"**  
