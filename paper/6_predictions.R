@@ -39,7 +39,7 @@ for(i in 1:length(sites)){
   site.in = sites[i]
   
   # Load predictions
-  data.predict.in_file = paste0("outputs/sites/", site.in, "/prediction_revue_balanced.csv")
+  data.predict.in_file = paste0("outputs/sites/", site.in, "/prediction_revue_full.csv")
   data.predict.in = fread(data.predict.in_file) %>% 
     mutate(image = as.numeric(image)) 
   colnames(data.predict.in) = gsub("ŷ", "u", colnames(data.predict.in))
