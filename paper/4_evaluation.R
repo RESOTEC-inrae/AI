@@ -81,10 +81,10 @@ significance <- results %>%
   summarise(p_value = t.test(value[dataset == unique(dataset)[1]], 
                              value[dataset == unique(dataset)[2]])$p.value,
             max_value = max(value, na.rm = TRUE), .groups = 'drop') %>%
-  mutate(significance = ifelse(p_value < 0.05, "*", " "),
+  mutate(p_adjusted = p.adjust(p_value, method = "bonferroni"),
+         significance = ifelse(p_adjusted < 0.05, "*", " "),
          y_position = max_value * 1.08) %>%
   mutate(metric = factor(metric, levels = c("precision", "recall", "f1-score")))
-
 
 # Prepare main plot data (excluding summary rows if desired)
 plot_data <- results %>%
