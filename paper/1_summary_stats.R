@@ -304,5 +304,39 @@ print(data.frame(tex), row.names = FALSE)
 
 
 
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# - Table of support per site and per label ----
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+# read data 
+images = fread("data/images.csv") %>% 
+  select(image, site) %>%
+  mutate(site = str_to_title(gsub("\\_", "\\ ", site)))
+annotations = fread("data/annotations.csv")
+
+# List sites
+sites = gsub("\\..+", "", gsub("\\_", "\\ ", list.files(path = "data/boundaries")))
+n <- length(sites)
+sites <- sites[c(1,4,6,7,2,3,5)]
+
+
+# Format  with full configuration
+data_full = annotations %>%
+  left_join(images, by = "image") %>%
+  pivot_longer(names_to = "label", values_to = "value", cols = labels) %>%
+  group_by(label, site) %>%
+  summarize(n = sum(value)) %>%
+  pivot_wider(names_from = "site", values_from = "n")
+data_full = data_full[, c("label", sites)]
+
+# Print for latex table
+tex=paste0(data_full$label, " & ",
+           data_full$Carpathians, " & ",
+           data_full$`French Alps`, " & ",
+           data_full$`Stubai Valley`, " & ",
+           data_full$Vinschgau, " & ",
+           data_full$Danube, " & ",
+           data_full$Dovre, " & ",
+           data_full$`Sierra Nevada`, " \\")
+print(data.frame(tex), row.names = FALSE)
